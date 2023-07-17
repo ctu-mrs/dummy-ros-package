@@ -19,7 +19,7 @@ void Dummy::onInit() {
 
   ros::Time::waitForValid();
 
-  ROS_INFO_THROTTLE(1.0, "[Dummy]: initialized 5");
+  ROS_INFO_THROTTLE(1.0, "[Dummy]: initialized 6");
 }
 
 //}
