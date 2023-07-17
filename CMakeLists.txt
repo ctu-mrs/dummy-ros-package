@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   )
 
 set(LIBRARIES
-  Dummy
+  MrsDummy
   )
 
 catkin_package(
@@ -23,7 +23,7 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
   )
 
-add_library(Dummy
+add_library(MrsDummy
   src/dummy.cpp
 )
 
