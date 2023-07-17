@@ -2,8 +2,8 @@
 Changelog for package mrs_dummy_package
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2023-07-17)
+------------------
 * wip
 * initial commit
 * Initial commit
