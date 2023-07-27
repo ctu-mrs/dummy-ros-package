@@ -19,7 +19,7 @@ on:
 jobs:
 
   build:
-    runs-on: ARM64
+    runs-on: self-hosted
 
     env:
       PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
