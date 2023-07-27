@@ -18,35 +18,7 @@ on:
 
 jobs:
 
-  # amd64_build:
-  #   runs-on: ubuntu-20.04
-
-  #   env:
-  #     PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
-
-  #   steps:
-
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-
-  #     - name: Checkout CI scripts
-  #       uses: actions/checkout@v3
-  #       with:
-  #         repository: ctu-mrs/ci_scripts
-  #         path: .ci_scripts
-  #         token: ${{ secrets.PUSH_TOKEN }}
-
-  #     - name: Install ROS
-  #       run: .ci_scripts/package_build/install_ros.sh
-
-  #     - name: Build
-  #       run: .ci_scripts/package_build/build_package.sh
-
-  #     - name: Deploy
-  #       run: .ci_scripts/package_build/deploy_deb.sh
-
-  arm64_build:
+  build:
     runs-on: ubuntu-20.04
 
     env:
@@ -54,42 +26,22 @@ jobs:
 
     steps:
 
-      # - uses: actions/checkout@v3
-      #   with:
-      #     fetch-depth: 0
-
-      # - name: Checkout CI scripts
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: ctu-mrs/ci_scripts
-      #     path: .ci_scripts
-      #     token: ${{ secrets.PUSH_TOKEN }}
-
-      - name : Build system
-        uses: uraimo/run-on-arch-action@v2.5.0
+      - uses: actions/checkout@v3
         with:
-          arch: armv7
-          distro: ubuntu20.04
-          run: |
-            uname -a
-            echo ::set-output name=uname::$(uname -a)
+          fetch-depth: 0
 
-           # .ci_scripts/package_build/install_ros.sh
-           # .ci_scripts/package_build/build_package.sh
-           # .ci_scripts/package_build/deploy_deb.sh
+      - name: Checkout CI scripts
+        uses: actions/checkout@v3
+        with:
+          repository: ctu-mrs/ci_scripts
+          path: .ci_scripts
+          token: ${{ secrets.PUSH_TOKEN }}
 
-      # - name: Checkout CI scripts
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: ctu-mrs/ci_scripts
-      #     path: .ci_scripts
-      #     token: ${{ secrets.PUSH_TOKEN }}
+      - name: Install ROS
+        run: .ci_scripts/package_build/install_ros.sh
 
-      # - name: Install ROS
-      #   run: 
+      - name: Build
+        run: .ci_scripts/package_build/build_package.sh
 
-      # - name: Build
-      #   run: .ci_scripts/package_build/build_package.sh
-
-      # - name: Deploy
-      #   run: .ci_scripts/package_build/deploy_deb.sh
+      - name: Deploy
+        run: .ci_scripts/package_build/deploy_deb.sh
