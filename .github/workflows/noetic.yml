@@ -19,7 +19,7 @@ on:
 jobs:
 
   build:
-    runs-on: raspi
+    runs-on: ARM64
 
     env:
       PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
