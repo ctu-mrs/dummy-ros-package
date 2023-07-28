@@ -13,7 +13,6 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
     uses: ctu-mrs/ci_scripts/.github/workflows/ros_package_build.yml@master
     secrets:
       PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
