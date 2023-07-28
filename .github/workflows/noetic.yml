@@ -4,22 +4,17 @@ on:
   push:
 
     branches: [ master ]
-    paths-ignore:
-      - '**/README.md'
 
   pull_request:
     branches: [ master ]
-
-  # schedule:
-  #   - cron:  '0 0 * * *' # at the end of every day
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
 
-  build:
-    runs-on: self-hosted
+  build_amd64:
+    runs-on: ubuntu-20.04
 
     env:
       PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
@@ -34,14 +29,79 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: ctu-mrs/ci_scripts
+          ref: arm
           path: .ci_scripts
           token: ${{ secrets.PUSH_TOKEN }}
 
-      - name: Install ROS
-        run: .ci_scripts/package_build/install_ros.sh
-
       - name: Build
-        run: .ci_scripts/package_build/build_package.sh
+        run: .ci_scripts/package_build/build_package.sh $GITHUB_WORKSPACE /tmp/artifacts
 
       - name: Deploy
-        run: .ci_scripts/package_build/deploy_deb.sh
+        run: .ci_scripts/package_build/push_to_ppa.sh unstable /tmp/artifacts
+
+  build_arm64:
+
+    # The host should always be linux
+    runs-on: ubuntu-20.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    # Run steps on a matrix of 4 arch/distro combinations
+    strategy:
+      matrix:
+        include:
+          # - arch: amd64
+          #   distro: ubuntu20.04
+          - arch: aarch64
+            distro: ubuntu20.04
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Checkout CI scripts
+        uses: actions/checkout@v3
+        with:
+          repository: ctu-mrs/ci_scripts
+          ref: arm
+          path: .ci_scripts
+          token: ${{ secrets.PUSH_TOKEN }}
+
+      - uses: uraimo/run-on-arch-action@v2
+        name: Build artifact
+
+        id: build
+
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+
+          # Not required, but speeds up builds
+          githubToken: ${{ github.token }}
+
+          # Create an artifacts directory
+          setup: |
+            mkdir -p "/tmp/artifacts"
+            mkdir -p "/tmp/repository"
+
+          # Mount the artifacts directory as /artifacts in the container
+          dockerRunArgs: |
+            --volume "$PWD:/tmp/repository"
+            --volume "/tmp/artifacts:/tmp/artifacts"
+
+          # # Pass some environment variables to the container
+          # env: | # YAML, but pipe character is necessary
+          #   artifact_name: git-${{ matrix.distro }}_${{ matrix.arch }}
+
+          # The shell to run commands with in the container
+          shell: /bin/sh
+
+          # Produce a binary artifact and place it in the mounted volume
+          run: |
+            /tmp/repository/.ci_scripts/package_build/build_package.sh /tmp/repository /tmp/artifacts
+
+      - name: Show the artifact
+        # Items placed in /artifacts in the container will be in
+        # ${PWD}/artifacts on the host.
+        run: |
+          ls -al "/tmp/artifacts"
