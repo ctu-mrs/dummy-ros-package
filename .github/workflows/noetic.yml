@@ -80,8 +80,9 @@ jobs:
           githubToken: ${{ github.token }}
 
           install: |
-            apt-get update -q -y
-            apt-get install -q -y sudo git curl
+            apt-get update -y
+            apt-get install -y sudo git curl
+            echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections
 
           # Create an artifacts directory
           setup: |
