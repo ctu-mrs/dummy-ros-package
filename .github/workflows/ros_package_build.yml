@@ -10,19 +10,13 @@ on:
 
   workflow_dispatch:
 
-jobs:
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
-  cancel:
-    name: Cancel Previous Runs
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
+jobs:
 
   build:
     uses: ctu-mrs/ci_scripts/.github/workflows/ros_package_build.yml@master
     secrets:
       PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
-
