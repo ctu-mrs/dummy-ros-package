@@ -13,51 +13,48 @@ on:
 
 jobs:
 
-#   build_amd64:
-#     runs-on: ubuntu-20.04
+  build_amd64:
+    runs-on: ubuntu-20.04
 
-#     env:
-#       PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+    env:
+      PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
 
-#     steps:
+    steps:
 
-#       - uses: actions/checkout@v3
-#         with:
-#           fetch-depth: 0
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          submodules: 'recursive'
 
-#       - name: Checkout CI scripts
-#         uses: actions/checkout@v3
-#         with:
-#           repository: ctu-mrs/ci_scripts
-#           ref: arm
-#           path: .ci_scripts
-#           token: ${{ secrets.PUSH_TOKEN }}
+      - name: Checkout CI scripts
+        uses: actions/checkout@v3
+        with:
+          repository: ctu-mrs/ci_scripts
+          ref: arm
+          path: .ci_scripts
+          token: ${{ secrets.PUSH_TOKEN }}
 
-#       - name: Build
-#         run: .ci_scripts/package_build/build_package.sh $GITHUB_WORKSPACE /tmp/artifacts
+      - name: Build
+        run: .ci_scripts/package_build/build_package.sh $GITHUB_WORKSPACE /tmp/artifacts
 
-#       - name: Deploy
-#         run: .ci_scripts/package_build/push_to_ppa.sh unstable /tmp/artifacts
+      - name: Deploy
+        run: .ci_scripts/package_build/push_to_ppa.sh unstable /tmp/artifacts
 
   build_arm64:
 
-    # The host should always be linux
     runs-on: ubuntu-20.04
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
-    # Run steps on a matrix of 4 arch/distro combinations
     strategy:
       matrix:
         include:
-          # - arch: amd64
-          #   distro: ubuntu20.04
           - arch: aarch64
             distro: ubuntu20.04
 
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           submodules: 'recursive'
 
       - name: Checkout CI scripts
@@ -77,7 +74,6 @@ jobs:
           arch: ${{ matrix.arch }}
           distro: ${{ matrix.distro }}
 
-          # Not required, but speeds up builds
           githubToken: ${{ github.token }}
 
           install: |
@@ -95,10 +91,6 @@ jobs:
             --volume "$PWD:/tmp/repository"
             --volume "/tmp/artifacts:/tmp/artifacts"
 
-          # # Pass some environment variables to the container
-          # env: | # YAML, but pipe character is necessary
-          #   artifact_name: git-${{ matrix.distro }}_${{ matrix.arch }}
-
           # The shell to run commands with in the container
           shell: /bin/sh
 
@@ -106,8 +98,5 @@ jobs:
           run: |
             /tmp/repository/.ci_scripts/package_build/build_package.sh /tmp/repository /tmp/artifacts
 
-      - name: Show the artifact
-        # Items placed in /artifacts in the container will be in
-        # ${PWD}/artifacts on the host.
-        run: |
-          ls -al "/tmp/artifacts"
+      - name: Deploy
+        run: .ci_scripts/package_build/push_to_ppa.sh unstable /tmp/artifacts
