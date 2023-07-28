@@ -51,6 +51,9 @@ jobs:
           - arch: aarch64
             distro: ubuntu20.04
 
+    env:
+      PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+
     steps:
       - uses: actions/checkout@v3
         with:
