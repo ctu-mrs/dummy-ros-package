@@ -3,16 +3,26 @@ name: ros_package_build
 on:
 
   push:
-    branches: [ master ]
+    branches: [ hw_api_ci ]
 
   pull_request:
-    branches: [ master ]
+    branches: [ hw_api_ci ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
+
+  cancel:
+    name: Cancel Previous Runs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+
   build:
     uses: ctu-mrs/ci_scripts/.github/workflows/ros_package_build.yml@master
     secrets:
       PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+
