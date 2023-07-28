@@ -3,10 +3,10 @@ name: ros_package_build
 on:
 
   push:
-    branches: [ hw_api_ci ]
+    branches: [ master ]
 
   pull_request:
-    branches: [ hw_api_ci ]
+    branches: [ master ]
 
   workflow_dispatch:
 
