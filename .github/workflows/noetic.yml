@@ -11,33 +11,33 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-jobs:
+# jobs:
 
-  build_amd64:
-    runs-on: ubuntu-20.04
+#   build_amd64:
+#     runs-on: ubuntu-20.04
 
-    env:
-      PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+#     env:
+#       PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
 
-    steps:
+#     steps:
 
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+#       - uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0
 
-      - name: Checkout CI scripts
-        uses: actions/checkout@v3
-        with:
-          repository: ctu-mrs/ci_scripts
-          ref: arm
-          path: .ci_scripts
-          token: ${{ secrets.PUSH_TOKEN }}
+#       - name: Checkout CI scripts
+#         uses: actions/checkout@v3
+#         with:
+#           repository: ctu-mrs/ci_scripts
+#           ref: arm
+#           path: .ci_scripts
+#           token: ${{ secrets.PUSH_TOKEN }}
 
-      - name: Build
-        run: .ci_scripts/package_build/build_package.sh $GITHUB_WORKSPACE /tmp/artifacts
+#       - name: Build
+#         run: .ci_scripts/package_build/build_package.sh $GITHUB_WORKSPACE /tmp/artifacts
 
-      - name: Deploy
-        run: .ci_scripts/package_build/push_to_ppa.sh unstable /tmp/artifacts
+#       - name: Deploy
+#         run: .ci_scripts/package_build/push_to_ppa.sh unstable /tmp/artifacts
 
   build_arm64:
 
